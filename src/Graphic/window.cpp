@@ -26,7 +26,7 @@ namespace NAQH
         {
             if (!glfwInit())
             {
-                Debug::log("Failed to initialize GLFW", Debug::Critical);
+                Debug::log("Failed to initialize GLFW", Debug::Fatal);
                 return false;
             }
             
@@ -34,7 +34,7 @@ namespace NAQH
             if(!window)
             {
                 glfwTerminate();
-                Debug::log("Failed to create glfw window", Debug::Critical);
+                Debug::log("Failed to create glfw window", Debug::Fatal);
                 return false;
             }
             glfwMakeContextCurrent(window);
