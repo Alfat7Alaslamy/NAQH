@@ -38,6 +38,7 @@ namespace NAQH
                 return false;
             }
             glfwMakeContextCurrent(window);
+            gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
             glfwSetWindowSizeCallback(window, WindowResize);
             return true;
         }
