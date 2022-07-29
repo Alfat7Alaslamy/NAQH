@@ -1,19 +1,5 @@
 #include "NAQH.hpp"
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-"}\n\0";
-
 int main()
 {
     glfwInit();
@@ -26,7 +12,17 @@ int main()
     {
         -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
          0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-         0.5f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f
+         0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+        -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+         0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+         0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+    };
+
+    GLuint indices[]
+    {
+        0, 3, 5,
+        3, 2, 4,
+        5, 4, 1
     };
 
     Window window("NAQH v0.0.1", 600, 800);
@@ -51,14 +47,17 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    GLuint VAO, VBO;
+    GLuint VAO, VBO, EBO;
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertices), indices, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glClearColor(0.3f, 0.6f, 0.8f, 1.0f);
@@ -69,6 +68,7 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     while (!window.Closed())
     {
@@ -77,12 +77,13 @@ int main()
         glfwPollEvents();
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
         window.Update();
     }
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 
     glfwTerminate();
